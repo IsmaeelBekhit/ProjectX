@@ -14,8 +14,7 @@ class MainRouterDelegate extends RouterDelegate<MainRoutePath>
   MainRoutePath path = MainRoutePath();
 
   final GlobalKey<NavigatorState> navigatorKey;
-  bool splash  = true;
-
+  bool splash = true;
 
   MainRouterDelegate() : navigatorKey = GlobalKey<NavigatorState>();
 
@@ -32,13 +31,15 @@ class MainRouterDelegate extends RouterDelegate<MainRoutePath>
           if (splash)
             const MaterialPage(key: ValueKey('SplashPage'), child: Splash())
           else if (!splash)
-            if (path.userId.isNotEmpty && path.userId != 'newUser' && path.userId != '0')
+            if (path.userId.isNotEmpty &&
+                path.userId != 'newUser' &&
+                path.userId != '0')
               const MaterialPage(key: ValueKey('HomePage'), child: Home())
             else if (path.userId == '0')
               const MaterialPage(
                   key: ValueKey('RegisteringPage'), child: Register())
             else if (path.userId == 'newUser')
-              const MaterialPage(
+              /* TODO: */ /*const*/ MaterialPage(
                   key: ValueKey('onBoardingPage'), child: onBoarding()),
           if (path.isUnknown)
             const MaterialPage(key: ValueKey('UnknownPage'), child: Unknown())
@@ -56,13 +57,14 @@ class MainRouterDelegate extends RouterDelegate<MainRoutePath>
   }
 
   @override
-  Future<void> setNewRoutePath(MainRoutePath mainRoutePath) async => path = mainRoutePath;
+  Future<void> setNewRoutePath(MainRoutePath mainRoutePath) async =>
+      path = mainRoutePath;
 
   @override
   MainRoutePath get currentConfiguration {
     if (path.isUnknown) {
       return MainRoutePath.unknown();
-    }  else {
+    } else {
       return MainRoutePath.user(path.userId);
     }
   }

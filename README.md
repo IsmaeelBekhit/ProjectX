@@ -1,6 +1,6 @@
 # projectx
 
-LALA.
+New Project.
 
 ## Getting Started
 

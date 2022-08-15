@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+
 import 'package:provider/provider.dart';
 
 import '../../Data/Providers/MainRouterDelegate.dart';
@@ -82,6 +83,7 @@ class _onBoardingState extends State<onBoarding> {
         // Displaying a stack
         child: Stack(
           children: <Widget>[
+            SvgPicture.asset("assets/analytics.svg"),
             // Displaying an object at the bottom right of the page in the background
             AnimatedPositioned(
                 duration: Duration(milliseconds: animation_duration),

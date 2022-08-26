@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:animated_text_kit/animated_text_kit.dart';
 
 import 'package:provider/provider.dart';
 
@@ -22,27 +23,9 @@ class _onBoardingState extends State<onBoarding> {
 
   // Defining a List of widgets that has the onBoarding pages
   late List<Widget> pages = [
-    onBorading_page(
-        "Join",
-        "You can find the best suited team for you to join and make sure you will get the most befit from it",
-        "assets/onBoarding/nerd.svg",
-        1,
-        19.59,
-        0),
-    onBorading_page(
-        "Communicate",
-        "You can find the best suited team for you to join and make sure you will get the most befit from it",
-        "assets/onBoarding/chat.svg",
-        2,
-        9.125,
-        0),
-    onBorading_page(
-        "Reach",
-        "Create profile for your team and deploy your team work to reach higher base of people that are interested in your work ",
-        "assets/onBoarding/analytics.svg",
-        3,
-        15,
-        0)
+    onBorading_page1(1),
+    onBorading_page2(0),
+    onBorading_page3(0)
   ];
 
   // Animate closing the page
@@ -77,7 +60,7 @@ class _onBoardingState extends State<onBoarding> {
 
   @override
   Widget build(BuildContext context) {
-    int animation_duration = 1000;
+    int animationDuration = 700;
     return Scaffold(
       body: Container(
         // Displaying a stack
@@ -86,7 +69,7 @@ class _onBoardingState extends State<onBoarding> {
             SvgPicture.asset("assets/analytics.svg"),
             // Displaying an object at the bottom right of the page in the background
             AnimatedPositioned(
-                duration: Duration(milliseconds: animation_duration),
+                duration: Duration(milliseconds: animationDuration),
                 curve: Curves.ease,
                 bottom: 0,
                 right: 0,
@@ -100,33 +83,44 @@ class _onBoardingState extends State<onBoarding> {
                         ? MediaQuery.of(context).size.width * 1.6
                         : MediaQuery.of(context).size.height * 1.6
                     : currentPage != pages.length - 1
-                        ? 136
-                        : 329,
+                        ? 68
+                        : 104,
                 height: currentPage == 1
                     ? MediaQuery.of(context).size.width >
                             MediaQuery.of(context).size.height
                         ? MediaQuery.of(context).size.width * 1.6
                         : MediaQuery.of(context).size.height * 1.6
-                    : 136,
+                    : currentPage != pages.length - 1
+                        ? 68
+                        : 53,
                 child: Transform.translate(
-                  // if it's not the last page move it by an offset(68, 68) else move it by an offset(215, 83)
+                  // if it's not the last page move it by an offset(68, 68) else it doesn't change its position
                   offset: currentPage != pages.length - 1
                       ? Offset(68, 68)
-                      : Offset(215, 83),
+                      : Offset(0, 0),
                   child:
                       // Displaying the quarter circle
                       Container(
                           decoration: BoxDecoration(
-                              color: AppColors.primaryColor,
-                              borderRadius: currentPage != pages.length - 1
-                                  ? BorderRadius.only(
-                                      bottomLeft: Radius.circular(
-                                          MediaQuery.of(context).size.height),
-                                      topLeft: Radius.circular(
-                                          MediaQuery.of(context).size.height),
-                                      topRight: Radius.circular(
-                                          MediaQuery.of(context).size.height))
-                                  : BorderRadius.circular(16))),
+                    color: AppColors.primaryColor,
+                    borderRadius: currentPage != pages.length - 1
+                        ? BorderRadius.only(
+                            bottomLeft: Radius.circular(
+                                MediaQuery.of(context).size.height),
+                            topLeft: Radius.circular(
+                                MediaQuery.of(context).size.height),
+                            topRight: Radius.circular(
+                                MediaQuery.of(context).size.height))
+                        : BorderRadius.circular(16),
+                    gradient: LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: <Color>[
+                        AppColors.primaryColor,
+                        Color(0xff990000)
+                      ],
+                    ),
+                  )),
                 )),
             // Displaying the pages
             Positioned(
@@ -136,7 +130,7 @@ class _onBoardingState extends State<onBoarding> {
                   scrollDirection: Axis.horizontal,
                   controller: pageController,
                   itemCount: pages.length,
-                  physics: NeverScrollableScrollPhysics(),
+                  // physics: NeverScrollableScrollPhysics(),
                   onPageChanged: (index) {
                     setState(() {
                       // updating the current page variable
@@ -164,7 +158,7 @@ class _onBoardingState extends State<onBoarding> {
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
                       // Displaying a button
-                      InkWell(
+                      GestureDetector(
                         // If it's not the the last page make display "skip" and when it's clicked call the popout function, else remove the text and make it do nothing
                         child: currentPage != pages.length - 1
                             ? Text("Skip",
@@ -177,38 +171,64 @@ class _onBoardingState extends State<onBoarding> {
                             ? () {
                                 popout();
                               }
-                            : null,
+                            : () {},
                       ),
                       Row(
                         children:
                             List<Widget>.generate(pages.length, (int index) {
                           return AnimatedContainer(
-                            duration: Duration(milliseconds: 500),
-                            width: 7,
-                            height: (index == currentPage) ? 30 : 12,
-                            margin: EdgeInsets.symmetric(
-                                vertical: 30, horizontal: 5),
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(5),
-                              color: currentPage != 1
-                                  ? (index == currentPage)
-                                      ? AppColors.primaryColor
-                                      : AppColors.primaryColor.withOpacity(0.5)
-                                  : (index == currentPage)
-                                      ? Color(0xffffffff)
-                                      : Color(0xffffffff).withOpacity(0.5),
-                              boxShadow: [
-                                BoxShadow(
-                                  color: (index == currentPage)
-                                      ? AppColors.primaryColor.withOpacity(0.25)
-                                      : Colors.transparent,
-                                  offset: Offset(0, 4),
-                                  spreadRadius: 0,
-                                  blurRadius: 4,
-                                )
-                              ],
-                            ),
-                          );
+                              duration: Duration(milliseconds: 500),
+                              width: 7,
+                              height: (index == currentPage) ? 30 : 12,
+                              margin: EdgeInsets.symmetric(
+                                  vertical: 30, horizontal: 5),
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(5),
+                                color: currentPage != 1
+                                    ? (index == currentPage)
+                                        ? AppColors.primaryColor
+                                        : AppColors.primaryColor
+                                            .withOpacity(0.5)
+                                    : (index == currentPage)
+                                        ? Color(0xffffffff)
+                                        : Color(0xffffffff).withOpacity(0.5),
+                                boxShadow: [
+                                  BoxShadow(
+                                    color: (index == currentPage)
+                                        ? currentPage == 1
+                                            ? Colors.white.withOpacity(0.25)
+                                            : AppColors.primaryColor
+                                                .withOpacity(0.25)
+                                        : Colors.transparent,
+                                    offset: Offset(0, 4),
+                                    spreadRadius: 0,
+                                    blurRadius: 4,
+                                  )
+                                ],
+                              ),
+                              child: GestureDetector(
+                                onTap: () {
+                                  if (index != currentPage) {
+                                    popout();
+                                    setState(() {
+                                      currentPage = index;
+                                    });
+                                    Timer(
+                                        Duration(
+                                            milliseconds: animationDuration),
+                                        () {
+                                      pageController.animateToPage(index,
+                                          duration: Duration(
+                                              milliseconds:
+                                                  (animationDuration / 10)
+                                                      .toInt()),
+                                          curve: Curves.linear);
+                                    });
+                                  }
+
+                                  // });
+                                },
+                              ));
                         }),
                       ),
                       SizedBox(
@@ -219,30 +239,28 @@ class _onBoardingState extends State<onBoarding> {
             ),
             // Displaying a button at the bottom right of the page
             AnimatedPositioned(
-              duration: Duration(
-                  milliseconds: int.parse((animation_duration / 2).toString())),
+              duration: Duration(milliseconds: (animationDuration / 2).toInt()),
               bottom: 0,
               right: 0,
-              // if it's not the last page make its width 136 else make it 329
-              width: currentPage != pages.length - 1 ? 136 : 329,
-              height: 136,
+              // if it's not the last page make its width 68 else make it 225
+              width: currentPage != pages.length - 1 ? 68 : 104,
+              height: currentPage != pages.length - 1 ? 68 : 53,
               // if it's not the last page move by an offset of (68, 68) and if it's clicked go to the next page, else move it by (215, 83) and call the popout function
               child: Transform.translate(
                 offset: currentPage != pages.length - 1
-                    ? Offset(68, 68)
-                    : Offset(215, 83),
-                child: InkWell(
+                    ? Offset(0, 0)
+                    : Offset(0, 0),
+                child: GestureDetector(
                   onTap: () {
                     if (currentPage != pages.length - 1) {
                       popout();
                       setState(() {
                         currentPage++;
                       });
-                      Timer(Duration(milliseconds: animation_duration), () {
+                      Timer(Duration(milliseconds: animationDuration), () {
                         pageController.nextPage(
                             duration: Duration(
-                                milliseconds: int.parse(
-                                    (animation_duration / 10).toString())),
+                                milliseconds: (animationDuration / 2).toInt()),
                             curve: Curves.linear);
                       });
                     } else {
@@ -252,32 +270,37 @@ class _onBoardingState extends State<onBoarding> {
                   },
                   // Making the button a circle and aligning it's children at the top left and giving it some padding
                   child: AnimatedContainer(
-                    duration: Duration(
-                        milliseconds:
-                            int.parse((animation_duration / 2).toString())),
-                    padding: EdgeInsets.all(20),
-                    alignment: Alignment.topLeft,
+                    duration:
+                        Duration(milliseconds: (animationDuration / 2).toInt()),
+                    padding: EdgeInsets.all(12),
+                    alignment: Alignment.center,
                     decoration: BoxDecoration(
                         // If it's not the second page make its color red else make it white
                         color: currentPage != 1
                             ? AppColors.primaryColor
                             : Colors.white,
-                        borderRadius: currentPage != pages.length - 1
-                            ? BorderRadius.circular(200)
-                            : BorderRadius.circular(16)),
-                    child: Positioned(
-                      // if it's not the last page make it's child an icon and make it red if it's the second page if it isn't make it white
-                      // Else, it's last page make it's child a text "start now"
-                      child: currentPage != pages.length - 1
-                          ? Icon(Icons.navigate_next_rounded,
-                              color: currentPage != 1
-                                  ? Colors.white
-                                  : AppColors.primaryColor,
-                              size: 35)
-                          : Text("Start Now!",
-                              style: TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.w700)),
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(
+                                currentPage != pages.length - 1 ? 200 : 16))),
+                    child: Transform.translate(
+                      offset: currentPage != pages.length - 1
+                          ? Offset(6, 6)
+                          : Offset(0, 0),
+                      child: Positioned(
+                        // if it's not the last page make it's child an icon and make it red if it's the second page if it isn't make it white
+                        // Else, it's last page make it's child a text "start now"
+                        child: currentPage != pages.length - 1
+                            ? Icon(Icons.navigate_next_rounded,
+                                color: currentPage != 1
+                                    ? Colors.white
+                                    : AppColors.primaryColor,
+                                size: 42)
+                            : Text("GET STARTED!",
+                                style: TextStyle(
+                                    color: Colors.white,
+                                    fontWeight: FontWeight.w700,
+                                    fontSize: 10)),
+                      ),
                     ),
                   ),
                 ),
@@ -292,7 +315,9 @@ class _onBoardingState extends State<onBoarding> {
                   child: Image.asset("assets/logo.png",
                       width: 31,
                       height: 49,
-                      color: currentPage == 1 ? Colors.white : null),
+                      color: currentPage == 1
+                          ? Colors.white
+                          : AppColors.primaryColor),
                 )),
           ],
         ),
@@ -301,24 +326,18 @@ class _onBoardingState extends State<onBoarding> {
   }
 }
 
-class onBorading_page extends StatefulWidget {
-  final String title;
-  final String text;
-  final String image;
-  final int seed;
-  final double top_margin_percent;
+class onBorading_page1 extends StatefulWidget {
   double factor;
 
-  onBorading_page(this.title, this.text, this.image, this.seed,
-      this.top_margin_percent, this.factor);
+  onBorading_page1(this.factor);
 
   @override
-  State<onBorading_page> createState() => _onBorading_pageState();
+  State<onBorading_page1> createState() => _onBorading_pageState1();
 }
 
-class _onBorading_pageState extends State<onBorading_page> {
+class _onBorading_pageState1 extends State<onBorading_page1> {
   double opacity = 0;
-  int animation_duration = 1000;
+  int animationDuration = 700;
   @override
   void initState() {
     super.initState();
@@ -326,8 +345,362 @@ class _onBorading_pageState extends State<onBorading_page> {
     Timer(
         Duration(
             milliseconds: widget.factor == 1
-                ? animation_duration
-                : int.parse((animation_duration / 2).toString())), () {
+                ? animationDuration
+                : (animationDuration / 2).toInt()), () {
+      setState(() {
+        opacity = 1;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        // Displaying a stack
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Centering the image
+            Container(
+              alignment: Alignment.center,
+              child: AnimatedContainer(
+                duration: Duration(
+                    milliseconds: widget.factor == 1
+                        ? animationDuration
+                        : (animationDuration / 2).toInt()),
+                curve: widget.factor == 1 ? Curves.linear : Curves.easeOutCirc,
+                alignment: Alignment.center,
+                // Giving it a top margin in a responsive way
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * (15 / 100)),
+                // Giving it full width
+                width: MediaQuery.of(context).size.width * widget.factor,
+                child: Container(
+                    // If the seed isn't 2 display the image only, if it is, display a stack that has the ellipse image and over it the image
+                    child: SvgPicture.asset("assets/onBoarding/nerd.svg")),
+              ),
+            ),
+            // To make the stack take full width and height
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+            ),
+            // Displaying a big circle border and changing its position according to the seed
+            circle(
+                1,
+                widget.factor,
+                0,
+                "0",
+                "null",
+                190,
+                Offset(27, -87),
+                Colors.transparent,
+                Colors.transparent,
+                AppColors.primaryColor,
+                4,
+                MediaQuery.of(context).size.width),
+            // Displaying a small filled circle and changing its position according to the seed
+            circle(
+                1,
+                widget.factor,
+                103,
+                "null",
+                "53",
+                30,
+                Offset(0, 0),
+                AppColors.primaryColor,
+                Colors.transparent,
+                Colors.transparent,
+                0,
+                MediaQuery.of(context).size.width),
+            // Displaying a small circle border and changing its position according to the seed and giving it shadow and fill color if the seed is 1
+            circle(
+                1,
+                widget.factor,
+                MediaQuery.of(context).size.height * 0.6325,
+                "32",
+                "null",
+                30,
+                Offset(0, 0),
+                Colors.white,
+                AppColors.primaryColor.withOpacity(0.25),
+                AppColors.primaryColor,
+                3,
+                MediaQuery.of(context).size.width),
+            // Displaying a different circle that has text in it
+            AnimatedPositioned(
+                duration: Duration(
+                    milliseconds: widget.factor == 1
+                        ? animationDuration
+                        : (animationDuration / 2).toInt()),
+                curve: widget.factor == 1 ? Curves.linear : Curves.easeOutCirc,
+                // Positioning it in a way that makes it responsive
+                top: MediaQuery.of(context).size.height * 0.61,
+                left: -44,
+                // Giving it full width and a height of 170
+                width: MediaQuery.of(context).size.width * widget.factor,
+                height: 170 * widget.factor,
+                child:
+                    // Displaying a stack that will have the circle and in top of it the text
+                    Stack(
+                  children: [
+                    AnimatedContainer(
+                      duration: Duration(
+                          milliseconds: widget.factor == 1
+                              ? animationDuration
+                              : (animationDuration / 2).toInt()),
+                      curve: widget.factor == 1
+                          ? Curves.linear
+                          : Curves.easeOutCirc,
+                      width: 190 * widget.factor,
+                      height: 170 * widget.factor,
+                      decoration: BoxDecoration(
+                          // Giving it the standard red color if the seed isn't 2
+                          color: AppColors.primaryColor,
+                          borderRadius: BorderRadius.circular(250)),
+                    ),
+                    // Displaying a column and making it take the least size
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Displaying 2 animated containers with full width and giving it some margin and  making one for the title and the other for the text and making it black unless the seed is 2, it will be white
+                        AnimatedContainer(
+                            duration: Duration(
+                                milliseconds: widget.factor == 1
+                                    ? animationDuration
+                                    : (animationDuration / 2).toInt()),
+                            curve: widget.factor == 1
+                                ? Curves.linear
+                                : Curves.easeOutCirc,
+                            width: double.infinity,
+                            margin:
+                                EdgeInsets.only(left: 59, bottom: 17, top: 36),
+                            child: AnimatedTextKit(
+                                totalRepeatCount: 1,
+                                animatedTexts: [
+                                  TypewriterAnimatedText(
+                                    'Join',
+                                    textStyle: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    337
+                                                ? 27
+                                                : 36,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.white.withOpacity(1)),
+                                    textAlign: TextAlign.start,
+                                  )
+                                ])),
+                        AnimatedContainer(
+                            duration: Duration(
+                                milliseconds: widget.factor == 1
+                                    ? animationDuration
+                                    : (animationDuration / 2).toInt()),
+                            curve: widget.factor == 1
+                                ? Curves.linear
+                                : Curves.easeOutCirc,
+                            margin: EdgeInsets.only(left: 59),
+                            width: double.infinity,
+                            child: AnimatedTextKit(
+                                totalRepeatCount: 1,
+                                animatedTexts: [
+                                  TypewriterAnimatedText(
+                                    'You can find the best suited team for you to join and make sure you will get the most befit from it',
+                                    textStyle: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black.withOpacity(1)),
+                                    textAlign: TextAlign.start,
+                                  )
+                                ])),
+                      ],
+                    ),
+                    // ),
+                  ],
+                )),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class onBorading_page2 extends StatefulWidget {
+  double factor;
+
+  onBorading_page2(this.factor);
+
+  @override
+  State<onBorading_page2> createState() => _onBorading_pageState2();
+}
+
+class _onBorading_pageState2 extends State<onBorading_page2> {
+  double opacity = 0;
+  int animationDuration = 700;
+  @override
+  void initState() {
+    super.initState();
+
+    Timer(
+        Duration(
+            milliseconds: widget.factor == 1
+                ? animationDuration
+                : (animationDuration / 2).toInt()), () {
+      setState(() {
+        opacity = 1;
+      });
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: <Widget>[
+        // Displaying a stack
+        Stack(
+          clipBehavior: Clip.none,
+          children: [
+            // Centering the image
+            Container(
+              alignment: Alignment.center,
+              child: AnimatedContainer(
+                duration: Duration(
+                    milliseconds: widget.factor == 1
+                        ? animationDuration
+                        : (animationDuration / 2).toInt()),
+                curve: widget.factor == 1 ? Curves.linear : Curves.easeOutCirc,
+                alignment: Alignment.center,
+                // Giving it a top margin in a responsive way
+                margin: EdgeInsets.only(
+                    top: MediaQuery.of(context).size.height * (9.125 / 100)),
+                // Giving it full width
+                width: MediaQuery.of(context).size.width * widget.factor,
+                child: Container(
+                    // If the seed isn't 2 display the image only, if it is, display a stack that has the ellipse image and over it the image
+                    child: Stack(
+                        alignment: AlignmentDirectional.center,
+                        children: [
+                      SvgPicture.asset(
+                        "assets/onBoarding/bg_ellipse.svg",
+                        allowDrawingOutsideViewBox: true,
+
+                        // width: MediaQuery.of(context).size.width,
+                        // height: 423.31,
+                      ),
+                      SvgPicture.asset("assets/onBoarding/chat.svg"),
+                    ])),
+              ),
+            ),
+            // To make the stack take full width and height
+            SizedBox(
+              width: MediaQuery.of(context).size.width,
+              height: MediaQuery.of(context).size.height,
+            ),
+            // Displaying a different circle that has text in it
+            AnimatedPositioned(
+                duration: Duration(
+                    milliseconds: widget.factor == 1
+                        ? animationDuration
+                        : (animationDuration / 2).toInt()),
+                curve: widget.factor == 1 ? Curves.linear : Curves.easeOutCirc,
+                // Positioning it in a way that makes it responsive
+                top: MediaQuery.of(context).size.height * 0.61,
+                left: -44,
+                // Giving it full width and a height of 170
+                width: MediaQuery.of(context).size.width * widget.factor,
+                height: 170 * widget.factor,
+                child:
+                    // Displaying a stack that will have the circle and in top of it the text
+                    Stack(
+                  children: [
+                    // Displaying a column and making it take the least size
+                    Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Displaying 2 animated containers with full width and giving it some margin and  making one for the title and the other for the text and making it black unless the seed is 2, it will be white
+                        AnimatedContainer(
+                            duration: Duration(
+                                milliseconds: widget.factor == 1
+                                    ? animationDuration
+                                    : (animationDuration / 2).toInt()),
+                            curve: widget.factor == 1
+                                ? Curves.linear
+                                : Curves.easeOutCirc,
+                            width: double.infinity,
+                            margin:
+                                EdgeInsets.only(left: 59, bottom: 17, top: 36),
+                            child: AnimatedTextKit(
+                                totalRepeatCount: 1,
+                                animatedTexts: [
+                                  TypewriterAnimatedText(
+                                    'Communicate',
+                                    textStyle: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    337
+                                                ? 27
+                                                : 36,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.white.withOpacity(1)),
+                                    textAlign: TextAlign.start,
+                                  )
+                                ])),
+                        AnimatedContainer(
+                            duration: Duration(
+                                milliseconds: widget.factor == 1
+                                    ? animationDuration
+                                    : (animationDuration / 2).toInt()),
+                            curve: widget.factor == 1
+                                ? Curves.linear
+                                : Curves.easeOutCirc,
+                            margin: EdgeInsets.only(left: 59),
+                            width: double.infinity,
+                            child: AnimatedTextKit(
+                                totalRepeatCount: 1,
+                                animatedTexts: [
+                                  TypewriterAnimatedText(
+                                    'You can find the best suited team for you to join and make sure you will get the most befit from it',
+                                    textStyle: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black.withOpacity(1)),
+                                    textAlign: TextAlign.start,
+                                  )
+                                ])),
+                      ],
+                    ),
+                    // ),
+                  ],
+                )),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class onBorading_page3 extends StatefulWidget {
+  double factor;
+
+  onBorading_page3(this.factor);
+
+  @override
+  State<onBorading_page3> createState() => _onBorading_pageState3();
+}
+
+class _onBorading_pageState3 extends State<onBorading_page3> {
+  double opacity = 0;
+  int animationDuration = 700;
+  @override
+  void initState() {
+    super.initState();
+
+    Timer(
+        Duration(
+            milliseconds: widget.factor == 1
+                ? animationDuration
+                : (animationDuration / 2).toInt()), () {
       setState(() {
         opacity = 1;
       });
@@ -349,32 +722,18 @@ class _onBorading_pageState extends State<onBorading_page> {
               child: AnimatedContainer(
                 duration: Duration(
                     milliseconds: widget.factor == 1
-                        ? animation_duration
-                        : int.parse((animation_duration / 2).toString())),
+                        ? animationDuration
+                        : (animationDuration / 2).toInt()),
                 curve: widget.factor == 1 ? Curves.linear : Curves.easeOutCirc,
                 alignment: Alignment.center,
                 // Giving it a top margin in a responsive way
                 margin: EdgeInsets.only(
-                    top: MediaQuery.of(context).size.height *
-                        (widget.top_margin_percent / 100)),
+                    top: MediaQuery.of(context).size.height * (15 / 100)),
                 // Giving it full width
                 width: MediaQuery.of(context).size.width * widget.factor,
                 child: Container(
                     // If the seed isn't 2 display the image only, if it is, display a stack that has the ellipse image and over it the image
-                    child: widget.seed != 2
-                        ? SvgPicture.asset(widget.image)
-                        : Stack(
-                            alignment: AlignmentDirectional.center,
-                            children: [
-                                SvgPicture.asset(
-                                  "assets/onBoarding/bg_ellipse.svg",
-                                  allowDrawingOutsideViewBox: true,
-
-                                  // width: MediaQuery.of(context).size.width,
-                                  // height: 423.31,
-                                ),
-                                SvgPicture.asset(widget.image),
-                              ])),
+                    child: SvgPicture.asset("assets/onBoarding/analytics.svg")),
               ),
             ),
             // To make the stack take full width and height
@@ -384,53 +743,52 @@ class _onBorading_pageState extends State<onBorading_page> {
             ),
             // Displaying a big circle border and changing its position according to the seed
             circle(
-                widget.seed,
+                3,
                 widget.factor,
                 0,
-                widget.seed == 1 ? 0 : null,
-                widget.seed == 3 ? 0 : null,
+                "null",
+                "0",
                 190,
-                widget.seed == 1 ? Offset(27, -87) : Offset(-60, -69),
+                Offset(-60, -69),
                 Colors.transparent,
                 Colors.transparent,
-                widget.seed != 2 ? AppColors.primaryColor : Colors.transparent,
-                4),
+                AppColors.primaryColor,
+                4,
+                MediaQuery.of(context).size.width),
             // Displaying a small filled circle and changing its position according to the seed
             circle(
-                widget.seed,
+                3,
                 widget.factor,
-                widget.seed == 1 ? 103 : 65,
-                widget.seed == 3 ? 50 : null,
-                widget.seed == 1 ? 53 : null,
+                65,
+                "50",
+                "null",
                 30,
                 Offset(0, 0),
-                widget.seed != 2 ? AppColors.primaryColor : null,
+                AppColors.primaryColor,
                 Colors.transparent,
                 Colors.transparent,
-                0),
+                0,
+                MediaQuery.of(context).size.width),
             // Displaying a small circle border and changing its position according to the seed and giving it shadow and fill color if the seed is 1
             circle(
-                widget.seed,
+                3,
                 widget.factor,
-                widget.seed == 1
-                    ? MediaQuery.of(context).size.height * 0.6325
-                    : MediaQuery.of(context).size.height * 0.93375,
-                widget.seed == 1 ? 32 : null,
-                widget.seed == 3 ? 41 : null,
+                MediaQuery.of(context).size.height * 0.93375,
+                "null",
+                "41",
                 30,
                 Offset(0, 0),
-                widget.seed == 1 ? Colors.white : null,
-                widget.seed == 1
-                    ? AppColors.primaryColor.withOpacity(0.25)
-                    : Colors.transparent,
-                widget.seed != 2 ? AppColors.primaryColor : Colors.transparent,
-                3),
+                Colors.transparent,
+                Colors.transparent,
+                AppColors.primaryColor,
+                3,
+                MediaQuery.of(context).size.width),
             // Displaying a different circle that has text in it
             AnimatedPositioned(
                 duration: Duration(
                     milliseconds: widget.factor == 1
-                        ? animation_duration
-                        : int.parse((animation_duration / 2).toString())),
+                        ? animationDuration
+                        : (animationDuration / 2).toInt()),
                 curve: widget.factor == 1 ? Curves.linear : Curves.easeOutCirc,
                 // Positioning it in a way that makes it responsive
                 top: MediaQuery.of(context).size.height * 0.61,
@@ -445,17 +803,16 @@ class _onBorading_pageState extends State<onBorading_page> {
                     AnimatedContainer(
                       duration: Duration(
                           milliseconds: widget.factor == 1
-                              ? animation_duration
-                              : int.parse((animation_duration / 2).toString())),
+                              ? animationDuration
+                              : (animationDuration / 2).toInt()),
                       curve: widget.factor == 1
                           ? Curves.linear
                           : Curves.easeOutCirc,
                       width: 190 * widget.factor,
-                      height: 170 * widget.factor,
+                      height: 190 * widget.factor,
                       decoration: BoxDecoration(
                           // Giving it the standard red color if the seed isn't 2
-                          color:
-                              widget.seed != 2 ? AppColors.primaryColor : null,
+                          color: AppColors.primaryColor,
                           borderRadius: BorderRadius.circular(250)),
                     ),
                     // Displaying a column and making it take the least size
@@ -464,57 +821,54 @@ class _onBorading_pageState extends State<onBorading_page> {
                       children: [
                         // Displaying 2 animated containers with full width and giving it some margin and  making one for the title and the other for the text and making it black unless the seed is 2, it will be white
                         AnimatedContainer(
-                          duration: Duration(
-                              milliseconds: widget.factor == 1
-                                  ? animation_duration
-                                  : int.parse(
-                                      (animation_duration / 2).toString())),
-                          curve: widget.factor == 1
-                              ? Curves.linear
-                              : Curves.easeOutCirc,
-                          width: double.infinity,
-                          margin:
-                              EdgeInsets.only(left: 59, bottom: 17, top: 36),
-                          child: Text(
-                            widget.title,
-                            style: TextStyle(
-                                fontSize: 36,
-                                fontWeight: FontWeight.w900,
-                                color: Colors.white.withOpacity(
-                                    widget.factor == 0
-                                        ? widget.factor
-                                        : opacity)),
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
+                            duration: Duration(
+                                milliseconds: widget.factor == 1
+                                    ? animationDuration
+                                    : (animationDuration / 2).toInt()),
+                            curve: widget.factor == 1
+                                ? Curves.linear
+                                : Curves.easeOutCirc,
+                            width: double.infinity,
+                            margin:
+                                EdgeInsets.only(left: 59, bottom: 17, top: 36),
+                            child: AnimatedTextKit(
+                                totalRepeatCount: 1,
+                                animatedTexts: [
+                                  TypewriterAnimatedText(
+                                    'Reach',
+                                    textStyle: TextStyle(
+                                        fontSize:
+                                            MediaQuery.of(context).size.width <
+                                                    337
+                                                ? 27
+                                                : 36,
+                                        fontWeight: FontWeight.w900,
+                                        color: Colors.white.withOpacity(1)),
+                                    textAlign: TextAlign.start,
+                                  )
+                                ])),
                         AnimatedContainer(
-                          duration: Duration(
-                              milliseconds: widget.factor == 1
-                                  ? animation_duration
-                                  : int.parse(
-                                      (animation_duration / 2).toString())),
-                          curve: widget.factor == 1
-                              ? Curves.linear
-                              : Curves.easeOutCirc,
-                          margin: EdgeInsets.only(left: 59),
-                          width: double.infinity,
-                          child: Text(
-                            widget.text,
-                            style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w400,
-                                color: widget.seed != 2
-                                    ? Colors.black.withOpacity(
-                                        widget.factor == 0
-                                            ? widget.factor
-                                            : opacity)
-                                    : Colors.white.withOpacity(
-                                        widget.factor == 0
-                                            ? widget.factor
-                                            : opacity)),
-                            textAlign: TextAlign.start,
-                          ),
-                        ),
+                            duration: Duration(
+                                milliseconds: widget.factor == 1
+                                    ? animationDuration
+                                    : (animationDuration / 2).toInt()),
+                            curve: widget.factor == 1
+                                ? Curves.linear
+                                : Curves.easeOutCirc,
+                            margin: EdgeInsets.only(left: 59),
+                            width: double.infinity,
+                            child: AnimatedTextKit(
+                                totalRepeatCount: 1,
+                                animatedTexts: [
+                                  TypewriterAnimatedText(
+                                    'Create profile for your team and deploy your team work to reach higher base of people that are interested in your work ',
+                                    textStyle: TextStyle(
+                                        fontSize: 12,
+                                        fontWeight: FontWeight.w400,
+                                        color: Colors.black.withOpacity(1)),
+                                    textAlign: TextAlign.start,
+                                  )
+                                ])),
                       ],
                     ),
                     // ),
@@ -528,63 +882,66 @@ class _onBorading_pageState extends State<onBorading_page> {
 }
 
 // A function that creates a circle instead of repeating the same lines for every circle
-Widget circle(int seed, double factor, top, right, left, diameter, offset, fill,
-    shadow_color, border_color, border_width,
-    [animation_duration = 1000]) {
+Widget circle(
+    int seed,
+    double factor,
+    double top,
+    String right,
+    String left,
+    double diameter,
+    Offset offset,
+    Color fill,
+    Color shadowColor,
+    Color borderColor,
+    double borderWidth,
+    double screenWidth,
+    [int animationDuration = 1000]) {
+  // left == "null"
+  //     ? print(screenWidth - double.parse(right))
+  //     : print(double.parse(left));
+  // print("${screenWidth}, ${left} , ${right}");
+  print(left == "null"
+      ? "oh LORD 1 ${Offset(top, screenWidth - (double.parse(right)))}"
+      : "oh LORD 2 ${Offset(top, double.parse(left))}");
   return AnimatedPositioned(
     duration: Duration(
-        milliseconds: factor == 1
-            ? animation_duration
-            : int.parse((animation_duration / 2).toString())),
+        milliseconds:
+            factor == 1 ? animationDuration : (animationDuration / 2).toInt()),
     curve: factor == 1 ? Curves.linear : Curves.easeOutCirc,
-    top: top,
-    left: left,
-    right: right,
+    // top: top,
+    // left: left,
+    // right: right,
     width: diameter * factor,
     height: diameter * factor,
     child: Transform.translate(
-      offset: offset,
-      child: Container(
-        decoration: BoxDecoration(
-            color: fill,
-            border: Border.all(color: border_color, width: 4),
-            borderRadius: BorderRadius.circular(200),
-            boxShadow: [
-              BoxShadow(
-                color: shadow_color,
-                offset: Offset(0, 4),
-                spreadRadius: 0,
-                blurRadius: border_width,
-              )
-            ]),
-      ),
-    ),
+        offset: left == "null"
+            ? Offset(screenWidth - (double.parse(right) + diameter), top)
+            : Offset(double.parse(left), top),
+        child: Transform.translate(
+          offset: offset,
+          child: Container(
+            decoration: BoxDecoration(
+                color: fill,
+                border: Border.all(color: borderColor, width: 4),
+                borderRadius: BorderRadius.circular(200),
+                boxShadow: [
+                  BoxShadow(
+                    color: shadowColor,
+                    offset: Offset(0, 4),
+                    spreadRadius: 0,
+                    blurRadius: borderWidth,
+                  )
+                ]),
+          ),
+        )),
   );
 }
 
 // Update the pages list
 void updateList(pages, factor_1, factor_2, factor_3) {
-  pages[0] = onBorading_page(
-      "Join",
-      "You can find the best suited team for you to join and make sure you will get the most befit from it",
-      "assets/onBoarding/nerd.svg",
-      1,
-      19.59,
-      factor_1);
-  pages[1] = onBorading_page(
-      "Communicate",
-      "You can find the best suited team for you to join and make sure you will get the most befit from it",
-      "assets/onBoarding/chat.svg",
-      2,
-      9.125,
-      factor_2);
-  pages[2] = onBorading_page(
-      "Reach",
-      "Create profile for your team and deploy your team work to reach higher base of people that are interested in your work ",
-      "assets/onBoarding/analytics.svg",
-      3,
-      15,
-      factor_3);
+  pages[0] = onBorading_page1(factor_1);
+  pages[1] = onBorading_page2(factor_2);
+  pages[2] = onBorading_page3(factor_3);
 }
 
 // class _onBoardingState extends State<onBoarding> {
